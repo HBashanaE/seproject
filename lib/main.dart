@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TrainTRACK',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: Home(title: 'TrainTRACK'),
@@ -28,15 +19,6 @@ class MyApp extends StatelessWidget {
 class Home extends StatefulWidget {
   Home({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -44,48 +26,144 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  
+  String startStation;
+  String endStation;
+  String startTime;
+  String endTime;
+  Future selectedTime;
+
+  @override
+  void initState() {
+    setState(() {
+      startTime = 'Not yet selected';
+      endTime = 'Not yet selected';
+    });
+    super.initState();
+  }
+
+  Future<TimeOfDay> _selectTime(BuildContext context) {
+    return showTimePicker(
+        initialTime: TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute),
+        context: context,
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the Home object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+      drawer: Drawer(
+        child: new ListView(
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+            new UserAccountsDrawerHeader(
+              accountName: new Text("Hasitha Bashana Elikewela"),
+              accountEmail: new Text('hbashanae@gmail.com'),
+              currentAccountPicture: new GestureDetector(
+                  child: new CircleAvatar(
+                backgroundImage: new NetworkImage(
+                    'https://www.w3schools.com/w3images/avatar2.png'),
+              )),
+              decoration: new BoxDecoration(
+                image: new DecorationImage(
+                    image: NetworkImage(
+                        'https://static.toiimg.com/photo/63463579/.jpg'),
+                    fit: BoxFit.fill),
+              ),
+            ),
+            new ListTile(
+              title: new Text('Hasitha Bashana Elikewela'),
             )
           ],
         ),
-      )
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            DropdownButton(
+              hint: Text('Please choose a start station'),
+              value: startStation,
+              onChanged: (newValue) {
+                setState(() {
+                  startStation = newValue;
+                });
+              },
+              items: ['A', 'B', 'C', 'D'].map((value) {
+                return DropdownMenuItem(
+                  child: new Text(value),
+                  value: value,
+                );
+              }).toList(),
+            ),
+            DropdownButton(
+              hint: Text('Please choose a end station'),
+              value: endStation,
+              onChanged: (newValue) {
+                setState(() {
+                  endStation = newValue;
+                });
+              },
+              items: ['A', 'B', 'C', 'D'].map((value) {
+                return DropdownMenuItem(
+                  child: new Text(value),
+                  value: value,
+                );
+              }).toList(),
+            ),
+            // RaisedButton(
+            //     shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(5.0)),
+            //     elevation: 4.0,
+            //     onPressed: () {
+            //       DatePicker.showTimePicker(context, showTitleActions: true,
+            //           onChanged: (time) {
+            //         print('change $time');
+            //       }, onConfirm: (time) {
+            //         setState(() {
+            //           startTime = '${time.hour}:${time.minute}';
+            //         });
+            //         print('confirm ${time.hour}:${time.minute}');
+            //       }, currentTime: DateTime.now(), locale: LocaleType.en);
+            //     },
+            //     child: Text(this.startTime.toString())),
+            
+            // MaterialButton(
+            //   onPressed: () {
+            //     Future selectedTime = showTimePicker(
+            //       initialTime: TimeOfDay.now(),
+            //       context: context,
+            //     );
+            //     print(selectedTime.toString());
+            //   },
+            //   child: Text(
+            //     'Test Button',
+            //   ),
+            //   color: Colors.black,
+            //   textColor: Colors.white,
+            // ),
+            MaterialButton(
+              onPressed: () async {
+                final selectedTime = await _selectTime(context);
+                print(selectedTime);
+              },
+              child: Text(
+                'Date Time Picker',
+              ),
+              color: Colors.black,
+              textColor: Colors.white,
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), title: Text('Profile'))
+        ],
+      ),
     );
   }
 }
