@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "319243385322",
+    "firebase_url": "https://itrack-23950.firebaseio.com",
+    "project_id": "itrack-23950",
+    "storage_bucket": "itrack-23950.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:319243385322:android:b54224db6d9fef3cc0da93",
+        "android_client_info": {
+          "package_name": "com.example.seproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "319243385322-tup9qq30isv92j7ghs7ucv82bd3q69s7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAATZRtgIdvVuZyv17V_8OoHq2ZCSIDAWg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "319243385322-tup9qq30isv92j7ghs7ucv82bd3q69s7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
