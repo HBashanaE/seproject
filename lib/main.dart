@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-// import './screens/homeScreen.dart';
-import './screens/loginScreen.dart';
+// import 'package:seproject/screens/searchResultScreen.dart';
+import './screens/TrainListScreen.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: Login(),
+      home: TrainList(),
     );
   }
 }
