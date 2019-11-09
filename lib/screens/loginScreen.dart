@@ -64,7 +64,26 @@ class _Login extends State<Login> {
             key: formKey,
             child: new Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: buildInputs() + buildSubmitButtons(),
+              children: <Widget>[
+                new TextFormField(
+                  decoration: new InputDecoration(labelText: 'Email'),
+                  validator: (value) =>
+                      value.isEmpty ? 'Email can\'t be empty' : null,
+                  onSaved: (value) => _email = value,
+                ),
+                new TextFormField(
+                  decoration: new InputDecoration(labelText: 'Password'),
+                  validator: (value) =>
+                      value.isEmpty ? 'Password can\'t be empty' : null,
+                  onSaved: (value) => _password = value,
+                  obscureText: true,
+                ),
+                new RaisedButton(
+                  child: new Text('Login', style: TextStyle(fontSize: 20.0)),
+                  onPressed: validateAndSubmit, 
+                )
+              ],
+              // children: buildInputs() + buildSubmitButtons(),
             ),
           )),
     );
@@ -101,7 +120,8 @@ class _Login extends State<Login> {
         onPressed: moveToRegiter,
       )
     ];
-    }else{
+    }
+    else{
       return [
       new RaisedButton(
         child: new Text('Create an account', style: TextStyle(fontSize: 20.0)),

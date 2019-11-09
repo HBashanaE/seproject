@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'TrainTRACK',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.amber,
       ),
       home: Home(title: 'TrainTRACK'),
     );
@@ -95,10 +95,10 @@ class _HomeState extends State<Home> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             DropdownButton(
-              hint: Text('Please choose a start station'),
+              hint: Text('start station'),
               value: startStation,
               onChanged: (newValue) {
                 setState(() {
@@ -113,7 +113,7 @@ class _HomeState extends State<Home> {
               }).toList(),
             ),
             DropdownButton(
-              hint: Text('Please choose a end station'),
+              hint: Text('end station'),
               value: endStation,
               onChanged: (newValue) {
                 setState(() {
@@ -181,7 +181,7 @@ class _HomeState extends State<Home> {
                 });
               },
               child: Text(
-                'Select end time',
+                'time',
               ),
               color: Colors.black,
               textColor: Colors.white,
