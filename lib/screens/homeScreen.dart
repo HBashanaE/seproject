@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MyApp());
 
@@ -32,6 +33,7 @@ class _HomeState extends State<Home> {
   String endTime;
   Future selectedTime;
   var startTimeController = TextEditingController();
+  final databaseReference = Firestore.instance;
 
   @override
   void initState() {
@@ -42,11 +44,23 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+  void getData() {
+    // Future<QuerySnapshot> data = Firestore.instance.collection('TrainJourney').getDocuments();
+    // var data = databaseReference.collection('TrainJourney').getDocuments();
+
+    var then = databaseReference
+        .collection("TrainJourney").getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => print('${f.data}}'));
+    });
+  }
+
   Future<TimeOfDay> _selectTime(BuildContext context) {
     return showTimePicker(
-        initialTime: TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute),
-        context: context,
-      );
+      initialTime:
+          TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute),
+      context: context,
+    );
   }
 
   @override
@@ -132,8 +146,7 @@ class _HomeState extends State<Home> {
 
             MaterialButton(
               onPressed: () {
-                print(this.startTime.toString());
-                print(this.endTime.toString());
+                getData();
               },
               child: Text(
                 'Test Button',
@@ -146,8 +159,8 @@ class _HomeState extends State<Home> {
                 final selectedTime = await _selectTime(context);
                 // print(selectedTime);
                 setState(() {
-                  if(selectedTime != null){
-                    this.startTime = selectedTime.toString(); 
+                  if (selectedTime != null) {
+                    this.startTime = selectedTime.toString();
                   }
                 });
               },
@@ -162,8 +175,8 @@ class _HomeState extends State<Home> {
                 final selectedTime = await _selectTime(context);
                 // print(selectedTime);
                 setState(() {
-                 if(selectedTime != null){
-                    this.endTime = selectedTime.toString(); 
+                  if (selectedTime != null) {
+                    this.endTime = selectedTime.toString();
                   }
                 });
               },
@@ -175,17 +188,17 @@ class _HomeState extends State<Home> {
             ),
             TextField(
               controller: startTimeController,
-              decoration: InputDecoration(
-                labelText: 'Select start time'
-              ),
+              decoration: InputDecoration(labelText: 'Select start time'),
               onTap: () async {
                 final selectedTime = await _selectTime(context);
                 // print(selectedTime);
-               
+
                 setState(() {
-                 if(selectedTime != null){
-                    this.endTime = selectedTime.toString(); 
-                     startTimeController.text = selectedTime.hour.toString()+':'+selectedTime.minute.toString();
+                  if (selectedTime != null) {
+                    this.endTime = selectedTime.toString();
+                    startTimeController.text = selectedTime.hour.toString() +
+                        ':' +
+                        selectedTime.minute.toString();
                   }
                 });
               },
@@ -202,4 +215,15 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+  Widget _buildBody(BuildContext context) {
+ return StreamBuilder<QuerySnapshot>(
+   stream: Firestore.instance.collection('baby').snapshots(),
+   builder: (context, snapshot) {
+     if (!snapshot.hasData) return LinearProgressIndicator();
+
+    print(snapshot.data.documents);
+   },
+ );
+}
 }

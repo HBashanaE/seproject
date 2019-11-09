@@ -23,7 +23,6 @@ class _Login extends State<Login> {
     }
   }
 
-//There may be error here can't validate
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
