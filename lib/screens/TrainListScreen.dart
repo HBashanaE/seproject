@@ -1,20 +1,6 @@
 import 'package:flutter/material.dart';
+import './trainDetailsScreen.dart';
 
-// void main() => runApp(MyApp());
-
-// class MyApp extends StatelessWidget {
-
-//   @override
-//   Widget build(BuildContext context) {
-//       return MaterialApp(
-//          title: 'Flutter Demo', 
-//          theme: ThemeData(
-//             primarySwatch: Colors.blue,
-//          ), 
-//          home: TrainList(title: 'Product layout demo home page'), 
-//       );
-//    }
-// }
 
 class TrainList extends StatelessWidget {
   TrainList ({Key key, this.title}) : super(key:key);
@@ -31,7 +17,7 @@ class TrainList extends StatelessWidget {
           children: <Widget>[
             Train(
               name: 'train-1',
-              startStation: 'Katubedd',
+              startStation: 'Katubedda',
               endStation: 'koratuwa',
               startTime: '10.00am',
               departureTime: '12.30pm',
@@ -95,7 +81,13 @@ class Train extends StatelessWidget{
   final String currentLocation;
 
   Widget build(BuildContext context){
-    return Container(
+    return GestureDetector(
+      onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TrainDetails()),
+                );
+      child: Container(
       padding: EdgeInsets.all(2),
       height: 140,
       width: 200,
@@ -173,7 +165,8 @@ class Train extends StatelessWidget{
                   ],
                 )
               )
-          );  
+          ),
+    );  
   }
   
 }
