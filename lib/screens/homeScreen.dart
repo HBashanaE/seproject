@@ -1,21 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TrainTRACK',
-      theme: ThemeData(
-        primarySwatch: Colors.amber,
-      ),
-      home: Home(title: 'TrainTRACK'),
-    );
-  }
-}
 
 class Home extends StatefulWidget {
   Home({Key key, this.title}) : super(key: key);
@@ -27,32 +13,80 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String _selected;
   String startStation;
   String endStation;
   String startTime;
   String endTime;
   Future selectedTime;
+  Stream result;
   var startTimeController = TextEditingController();
+  var endTimeController = TextEditingController();
   final databaseReference = Firestore.instance;
 
   @override
   void initState() {
     setState(() {
+      getStationData().then((r) {
+        result = r;
+      });
       startTime = 'Not yet selected';
       endTime = 'Not yet selected';
     });
     super.initState();
   }
 
-  void getData() {
+  getStationData() async {
     // Future<QuerySnapshot> data = Firestore.instance.collection('TrainJourney').getDocuments();
     // var data = databaseReference.collection('TrainJourney').getDocuments();
 
-    var then = databaseReference
-        .collection("TrainJourney").getDocuments()
-        .then((QuerySnapshot snapshot) {
-      snapshot.documents.forEach((f) => print('${f.data}}'));
+    return await Firestore.instance.collection('StationList').snapshots();
+
+    // var x = Firestore.instance
+    //     .collection('TrainJourney')
+    //     .where("End Station", isEqualTo: "Panadura")
+    //     .snapshots()
+    //     .listen(
+    //         (data) => data.documents.forEach((doc) => print(doc.documentID)));
+
+    // var then = databaseReference
+    //     .collection("TrainJourney").getDocuments()
+    //     .then((QuerySnapshot snapshot) {
+    //   snapshot.documents.forEach((f) => print('${f.data}}'));
+    // });
+  }
+
+  getTrains() {
+    setState(() {
+      getStationData().then((r) {
+        result = r;
+      });
     });
+    if (result != null){
+      return StreamBuilder(
+        stream: Firestore.instance.collection('StationList').snapshots(),
+        builder: (context, snapshot) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DropdownButton(
+              hint: Text('Start station'),
+              value: startStation,
+              onChanged: (newValue) {
+                setState(() {
+                  startStation = newValue;
+                });
+              },
+              items: ['A', 'B', 'C', 'D'].map((value) {
+                return DropdownMenuItem(
+                  child: new Text(value),
+                  value: value,
+                );
+              }).toList(),
+            ),
+          );
+        },
+      );
+    }
   }
 
   Future<TimeOfDay> _selectTime(BuildContext context) {
@@ -98,7 +132,7 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             DropdownButton(
-              hint: Text('start station'),
+              hint: Text('Start station'),
               value: startStation,
               onChanged: (newValue) {
                 setState(() {
@@ -113,7 +147,7 @@ class _HomeState extends State<Home> {
               }).toList(),
             ),
             DropdownButton(
-              hint: Text('end station'),
+              hint: Text('End station'),
               value: endStation,
               onChanged: (newValue) {
                 setState(() {
@@ -127,6 +161,56 @@ class _HomeState extends State<Home> {
                 );
               }).toList(),
             ),
+            StreamBuilder<QuerySnapshot>(
+        stream: Firestore.instance.collection('StationList').snapshots(),
+        builder: (context, snapshot) {
+          var length = snapshot.data.documents.length;
+          DocumentSnapshot ds = snapshot.data.documents[length - 1];
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: DropdownButton(
+              hint: Text('Start station'),
+              value: startStation,
+              onChanged: (newValue) {
+                setState(() {
+                  startStation = newValue.toString();
+                });
+              },
+              items: snapshot.data.documents.map((DocumentSnapshot value) {
+                return DropdownMenuItem(
+                  child: new Text(value.documentID),
+                  value: value.documentID,
+                );
+              }).toList(),
+            ),
+          );
+        },
+      ),
+            // StreamBuilder(
+            //   stream: Firestore.instance.collection('StationList').snapshots(),
+            //   builder: (context, snapshot) {
+            //     var length = snapshot.data.documents.length;
+            //     DocumentSnapshot ds = snapshot.data.documents[length - 1];
+            //     return new Container(
+            //       child: DropdownButton(
+            //         hint: Text('End station'),
+            //         value: endStation,
+            //         onChanged: (newValue) {
+            //           setState(() {
+            //             endStation = newValue;
+            //           });
+            //         },
+            //         items: snapshot.data.documents.map((DocumentSnapshot doc) {
+            //           return new DropdownMenuItem<String>(
+            //             value: doc.data['title'],
+            //             child: new Text(doc.data['title']),
+            //           );
+            //         }).toList(),
+            //       ),
+            //     );
+            //   },
+            // ),
+
             // RaisedButton(
             //     shape: RoundedRectangleBorder(
             //         borderRadius: BorderRadius.circular(5.0)),
@@ -143,87 +227,58 @@ class _HomeState extends State<Home> {
             //       }, currentTime: DateTime.now(), locale: LocaleType.en);
             //     },
             //     child: Text(this.startTime.toString())),
+            Container(
+              width: 100,
+              child: TextField(
+                controller: startTimeController,
+                decoration: InputDecoration(labelText: 'Select start time'),
+                onTap: () async {
+                  final selectedTime = await _selectTime(context);
+                  // print(selectedTime);
 
+                  setState(() {
+                    if (selectedTime != null) {
+                      this.endTime = selectedTime.toString();
+                      startTimeController.text = selectedTime.hour.toString() +
+                          ':' +
+                          selectedTime.minute.toString();
+                    }
+                  });
+                },
+              ),
+            ),
+            Container(
+              width: 100,
+              child: TextField(
+                controller: endTimeController,
+                decoration: InputDecoration(labelText: 'Select end time'),
+                onTap: () async {
+                  final selectedTime = await _selectTime(context);
+                  // print(selectedTime);
+
+                  setState(() {
+                    if (selectedTime != null) {
+                      this.endTime = selectedTime.toString();
+                      endTimeController.text = selectedTime.hour.toString() +
+                          ':' +
+                          selectedTime.minute.toString();
+                    }
+                  });
+                },
+              ),
+            ),
+            Divider(),
             MaterialButton(
-              onPressed: () {
-                getData();
-              },
+              onPressed: () {},
               child: Text(
                 'Test Button',
               ),
               color: Colors.black,
               textColor: Colors.white,
             ),
-            MaterialButton(
-              onPressed: () async {
-                final selectedTime = await _selectTime(context);
-                // print(selectedTime);
-                setState(() {
-                  if (selectedTime != null) {
-                    this.startTime = selectedTime.toString();
-                  }
-                });
-              },
-              child: Text(
-                'Select start time',
-              ),
-              color: Colors.black,
-              textColor: Colors.white,
-            ),
-            MaterialButton(
-              onPressed: () async {
-                final selectedTime = await _selectTime(context);
-                // print(selectedTime);
-                setState(() {
-                  if (selectedTime != null) {
-                    this.endTime = selectedTime.toString();
-                  }
-                });
-              },
-              child: Text(
-                'time',
-              ),
-              color: Colors.black,
-              textColor: Colors.white,
-            ),
-            TextField(
-              controller: startTimeController,
-              decoration: InputDecoration(labelText: 'Select start time'),
-              onTap: () async {
-                final selectedTime = await _selectTime(context);
-                // print(selectedTime);
-
-                setState(() {
-                  if (selectedTime != null) {
-                    this.endTime = selectedTime.toString();
-                    startTimeController.text = selectedTime.hour.toString() +
-                        ':' +
-                        selectedTime.minute.toString();
-                  }
-                });
-              },
-            )
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), title: Text('Profile'))
-        ],
-      ),
     );
   }
-
-  Widget _buildBody(BuildContext context) {
- return StreamBuilder<QuerySnapshot>(
-   stream: Firestore.instance.collection('baby').snapshots(),
-   builder: (context, snapshot) {
-     if (!snapshot.hasData) return LinearProgressIndicator();
-
-    print(snapshot.data.documents);
-   },
- );
-}
 }
