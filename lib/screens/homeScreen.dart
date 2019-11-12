@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:seproject/screens/TrainListScreen.dart';
+
+import './trainDetailsScreen.dart';
 
 class Home extends StatefulWidget {
   Home({Key key, this.title}) : super(key: key);
@@ -56,39 +59,6 @@ class _HomeState extends State<Home> {
     // });
   }
 
-  getTrains() {
-    setState(() {
-      getStationData().then((r) {
-        result = r;
-      });
-    });
-    if (result != null){
-      return StreamBuilder(
-        stream: Firestore.instance.collection('StationList').snapshots(),
-        builder: (context, snapshot) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: DropdownButton(
-              hint: Text('Start station'),
-              value: startStation,
-              onChanged: (newValue) {
-                setState(() {
-                  startStation = newValue;
-                });
-              },
-              items: ['A', 'B', 'C', 'D'].map((value) {
-                return DropdownMenuItem(
-                  child: new Text(value),
-                  value: value,
-                );
-              }).toList(),
-            ),
-          );
-        },
-      );
-    }
-  }
-
   Future<TimeOfDay> _selectTime(BuildContext context) {
     return showTimePicker(
       initialTime:
@@ -131,102 +101,60 @@ class _HomeState extends State<Home> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            DropdownButton(
-              hint: Text('Start station'),
-              value: startStation,
-              onChanged: (newValue) {
-                setState(() {
-                  startStation = newValue;
-                });
-              },
-              items: ['A', 'B', 'C', 'D'].map((value) {
-                return DropdownMenuItem(
-                  child: new Text(value),
-                  value: value,
+            StreamBuilder<QuerySnapshot>(
+              stream: Firestore.instance.collection('StationList').snapshots(),
+              builder: (context, snapshot) {
+                var length = snapshot.data.documents.length;
+                DocumentSnapshot ds = snapshot.data.documents[length - 1];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton(
+                    hint: Text('Start station'),
+                    value: startStation,
+                    onChanged: (newValue) {
+                      setState(() {
+                        startStation = newValue;
+                      });
+                      print(startStation);
+                    },
+                    items:
+                        snapshot.data.documents.map((DocumentSnapshot value) {
+                      return DropdownMenuItem(
+                        child: new Text(value.documentID),
+                        value: value.documentID,
+                      );
+                    }).toList(),
+                  ),
                 );
-              }).toList(),
-            ),
-            DropdownButton(
-              hint: Text('End station'),
-              value: endStation,
-              onChanged: (newValue) {
-                setState(() {
-                  endStation = newValue;
-                });
               },
-              items: ['A', 'B', 'C', 'D'].map((value) {
-                return DropdownMenuItem(
-                  child: new Text(value),
-                  value: value,
-                );
-              }).toList(),
             ),
             StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection('StationList').snapshots(),
-        builder: (context, snapshot) {
-          var length = snapshot.data.documents.length;
-          DocumentSnapshot ds = snapshot.data.documents[length - 1];
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: DropdownButton(
-              hint: Text('Start station'),
-              value: startStation,
-              onChanged: (newValue) {
-                setState(() {
-                  startStation = newValue.toString();
-                });
-              },
-              items: snapshot.data.documents.map((DocumentSnapshot value) {
-                return DropdownMenuItem(
-                  child: new Text(value.documentID),
-                  value: value.documentID,
+              stream: Firestore.instance.collection('StationList').snapshots(),
+              builder: (context, snapshot) {
+                var length = snapshot.data.documents.length;
+                DocumentSnapshot ds = snapshot.data.documents[length - 1];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: DropdownButton(
+                    hint: Text('End station'),
+                    value: endStation,
+                    onChanged: (newValue) {
+                      setState(() {
+                        endStation = newValue;
+                      });
+                      print(endStation);
+                    },
+                    items:
+                        snapshot.data.documents.map((DocumentSnapshot value) {
+                      return DropdownMenuItem(
+                        child: new Text(value.documentID),
+                        value: value.documentID,
+                      );
+                    }).toList(),
+                  ),
                 );
-              }).toList(),
+              },
             ),
-          );
-        },
-      ),
-            // StreamBuilder(
-            //   stream: Firestore.instance.collection('StationList').snapshots(),
-            //   builder: (context, snapshot) {
-            //     var length = snapshot.data.documents.length;
-            //     DocumentSnapshot ds = snapshot.data.documents[length - 1];
-            //     return new Container(
-            //       child: DropdownButton(
-            //         hint: Text('End station'),
-            //         value: endStation,
-            //         onChanged: (newValue) {
-            //           setState(() {
-            //             endStation = newValue;
-            //           });
-            //         },
-            //         items: snapshot.data.documents.map((DocumentSnapshot doc) {
-            //           return new DropdownMenuItem<String>(
-            //             value: doc.data['title'],
-            //             child: new Text(doc.data['title']),
-            //           );
-            //         }).toList(),
-            //       ),
-            //     );
-            //   },
-            // ),
-
-            // RaisedButton(
-            //     shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(5.0)),
-            //     elevation: 4.0,
-            //     onPressed: () {
-            //       DatePicker.showTimePicker(context, showTitleActions: true,
-            //           onChanged: (time) {
-            //         print('change $time');
-            //       }, onConfirm: (time) {
-            //         setState(() {
-            //           startTime = '${time.hour}:${time.minute}';
-            //         });
-            //         print('confirm ${time.hour}:${time.minute}');
-            //       }, currentTime: DateTime.now(), locale: LocaleType.en);
-            //     },
-            //     child: Text(this.startTime.toString())),
             Container(
               width: 100,
               child: TextField(
@@ -238,10 +166,18 @@ class _HomeState extends State<Home> {
 
                   setState(() {
                     if (selectedTime != null) {
-                      this.endTime = selectedTime.toString();
-                      startTimeController.text = selectedTime.hour.toString() +
-                          ':' +
-                          selectedTime.minute.toString();
+                      var h;
+                      var m;
+                      h = selectedTime.hour.toString();
+                      m = selectedTime.minute.toString();
+                      if(selectedTime.hour<9){
+                        h = '0'+ selectedTime.hour.toString();
+                      }
+                      if(selectedTime.minute<9){
+                        m = '0' + selectedTime.minute.toString();
+                      }
+                      this.startTime = '${h} :  ${m}';
+                      startTimeController.text ='${h} :  ${m}' ;
                     }
                   });
                 },
@@ -258,10 +194,18 @@ class _HomeState extends State<Home> {
 
                   setState(() {
                     if (selectedTime != null) {
-                      this.endTime = selectedTime.toString();
-                      endTimeController.text = selectedTime.hour.toString() +
-                          ':' +
-                          selectedTime.minute.toString();
+                      var h;
+                      var m;
+                      h = selectedTime.hour.toString();
+                      m = selectedTime.minute.toString();
+                      if(selectedTime.hour<9){
+                        h = '0'+ selectedTime.hour.toString();
+                      }
+                      if(selectedTime.minute<9){
+                        m = '0' + selectedTime.minute.toString();
+                      }
+                      this.endTime = '${h} :  ${m}';
+                      endTimeController.text ='${h} :  ${m}' ;
                     }
                   });
                 },
@@ -269,9 +213,14 @@ class _HomeState extends State<Home> {
             ),
             Divider(),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TrainList()),
+                );
+              },
               child: Text(
-                'Test Button',
+                'Search Trains',
               ),
               color: Colors.black,
               textColor: Colors.white,
