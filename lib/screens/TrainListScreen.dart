@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:seproject/screens/TrainView.dart';
 
 void main() => runApp(MyApp());
 
@@ -68,7 +69,16 @@ class TrainList extends StatelessWidget {
               startTime: '10.00am',
               departureTime: '12.30pm',
               currentLocation: 'papliyana'
-            )
+            ),
+            Train(
+              name: 'train-1',
+              startStation: 'Katubedd',
+              endStation: 'koratuwa',
+              startTime: '10.00am',
+              departureTime: '12.30pm',
+              currentLocation: 'papliyana'
+            ),
+            
           ],
         // )
       )
@@ -76,8 +86,8 @@ class TrainList extends StatelessWidget {
   }
 }
 
-class Train extends StatelessWidget{
-  Train({
+class Train1 extends StatelessWidget{
+  Train1({
     Key key, 
     this.name,
     this.startTime, 
@@ -97,9 +107,11 @@ class Train extends StatelessWidget{
   Widget build(BuildContext context){
     return Container(
       padding: EdgeInsets.all(2),
-      height: 140,
-      width: 200,
-      child: Card(        
+      height: 100,
+      width: 150,
+      color: Colors.blue,
+      child: Card(   
+        color: Colors.green,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -108,14 +120,7 @@ class Train extends StatelessWidget{
                 padding: EdgeInsets.all(5), 
                 child: Column(    
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-                    children: <Widget>[                       
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-                        children: <Widget> [                          
-                          Text(this.name),
-                        ],
-                      ),
-
+                    children: <Widget>[ 
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween, 
                         children: <Widget> [                          
@@ -136,40 +141,6 @@ class Train extends StatelessWidget{
                 )
               )
           )
-
-            // Expanded(
-            //   child: Container(
-            //     padding: EdgeInsets.all(5),
-            //     child: Column(
-            //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //         children: <Widget>[                      
-            //           Text(this.name),
-            //           // Padding(
-            //           //   padding: const EdgeInsets.all(8.0),  
-            //           Expanded(
-            //             child: Card(
-            //               child: Row(
-            //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //                 children: <Widget>[
-            //                   Text(this.startStation),
-            //                   Text(this.startTime),
-            //                 ],                          
-            //               ),
-            //             ),
-                        
-            //           ),
-            //           Expanded(
-            //             child: Card(
-            //               child: Row(
-            //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //                 children: <Widget>[
-            //                   Text(this.endStation),
-            //                   Text(this.departureTime),
-            //                 ],                          
-            //               ),
-            //             ),
-              
-                      // )
                   ],
                 )
               )
@@ -177,3 +148,78 @@ class Train extends StatelessWidget{
   }
   
 }
+
+class Train extends StatelessWidget {
+  Train({
+    Key key, 
+    this.name,
+    this.startTime, 
+    this.departureTime, 
+    this.startStation,
+    this.endStation,
+    this.currentLocation
+  });
+
+  final String name;
+  final String startTime;
+  final String departureTime;
+  final String startStation;
+  final String endStation;
+  final String currentLocation;
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        color: Colors.grey,
+        child: FlatButton(
+          
+          onPressed: ()=>{
+            navigate(context, TrainView(
+                                      "",
+                                      this.name,
+                                      this.startStation, 
+                                      this.startTime, 
+                                      this.endStation, 
+                                      this.departureTime, 
+                                      this.currentLocation 
+                                    ))
+          },
+          // child: Card(
+          child: Column(
+            
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                children: <Widget> [                          
+                  Text(this.startStation),
+                  Text(this.startTime),
+                ],
+              ),
+              
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                children: <Widget> [                          
+                  Text(this.startStation),
+                  Text(this.startTime),
+                ],
+              )
+            ],
+                       
+
+          ),
+          ),
+        
+
+    );
+    
+  }
+
+  navigate(context,Widget wid){
+    return Navigator.push(context, MaterialPageRoute(builder: (context){
+      return wid;
+    }));
+  }
+
+}
+
+
+
