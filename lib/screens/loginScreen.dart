@@ -23,16 +23,15 @@ class _Login extends State<Login> {
     }
   }
 
-//There may be error here can't validate
   void validateAndSubmit() async {
     if (validateAndSave()) {
       try {
         if(_formType == FormType.login){
           AuthResult user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password);
-        // print(user.user.uid);
+        print(user.user.uid);
         } else{
           AuthResult user = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password);
-          // print(user.user.uid); 
+          print(user.user.uid); 
         }
       } catch (e) {
         print(e);

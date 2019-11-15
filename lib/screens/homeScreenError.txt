@@ -1,0 +1,285 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+// import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class Home extends StatefulWidget {
+  Home({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  String _selected;
+  String startStation;
+  String endStation;
+  String startTime;
+  String endTime;
+  Future selectedTime;
+  var startTimeController = TextEditingController();
+  var endTimeController = TextEditingController();
+  final databaseReference = Firestore.instance;
+
+  @override
+  void initState() {
+    setState(() {
+      startTime = 'Not yet selected';
+      endTime = 'Not yet selected';
+    });
+    super.initState();
+  }
+
+  void getData() {
+    // Future<QuerySnapshot> data = Firestore.instance.collection('TrainJourney').getDocuments();
+    // var data = databaseReference.collection('TrainJourney').getDocuments();
+    var x = Firestore.instance
+        .collection('TrainJourney')
+        .where("End Station", isEqualTo: "Panadura")
+        .snapshots()
+        .listen(
+            (data) => data.documents.forEach((doc) => print(doc.documentID)));
+
+    // var then = databaseReference
+    //     .collection("TrainJourney").getDocuments()
+    //     .then((QuerySnapshot snapshot) {
+    //   snapshot.documents.forEach((f) => print('${f.data}}'));
+    // });
+  }
+
+  Future<TimeOfDay> _selectTime(BuildContext context) {
+    return showTimePicker(
+      initialTime:
+          TimeOfDay(hour: TimeOfDay.now().hour, minute: TimeOfDay.now().minute),
+      context: context,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      drawer: Drawer(
+        child: new ListView(
+          children: <Widget>[
+            new UserAccountsDrawerHeader(
+              accountName: new Text("Hasitha Bashana Elikewela"),
+              accountEmail: new Text('hbashanae@gmail.com'),
+              currentAccountPicture: new GestureDetector(
+                  child: new CircleAvatar(
+                backgroundImage: new NetworkImage(
+                    'https://www.w3schools.com/w3images/avatar2.png'),
+              )),
+              decoration: new BoxDecoration(
+                image: new DecorationImage(
+                    image: NetworkImage(
+                        'https://static.toiimg.com/photo/63463579/.jpg'),
+                    fit: BoxFit.fill),
+              ),
+            ),
+            new ListTile(
+              title: new Text('Hasitha Bashana Elikewela'),
+            )
+          ],
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            DropdownButton(
+              hint: Text('start station'),
+              value: startStation,
+              onChanged: (newValue) {
+                setState(() {
+                  startStation = newValue;
+                });
+              },
+              items: ['A', 'B', 'C', 'D'].map((value) {
+                return DropdownMenuItem(
+                  child: new Text(value),
+                  value: value,
+                );
+              }).toList(),
+            ),
+            StreamBuilder(
+              stream: Firestore.instance.collection('StationList').snapshots(),
+              builder: (context, snapshot) {
+                var length = snapshot.data.documents.length;
+                DocumentSnapshot ds = snapshot.data.documents[length - 1];
+                return new Container(
+                  child: DropdownButton(
+                    hint: Text('End station'),
+                    value: endStation,
+                    onChanged: (newValue) {
+                      setState(() {
+                        endStation = newValue;
+                      });
+                    },
+                    items: snapshot.data.documents.map((DocumentSnapshot doc) {
+                      return new DropdownMenuItem<String>(
+                        value: doc.data['title'],
+                        child: new Text(doc.data['title']),
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
+            ),
+
+            new StreamBuilder<QuerySnapshot>(
+                stream:
+                    Firestore.instance.collection('StationList').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData)
+                    return const Center(
+                      child: const CupertinoActivityIndicator(),
+                    );
+                  var length = snapshot.data.documents.length;
+                  DocumentSnapshot ds = snapshot.data.documents[length - 1];
+                  var _queryCat = snapshot.data.documents;
+                  return new Container(
+                    padding: EdgeInsets.only(bottom: 16.0),
+                    child: new Row(
+                      children: <Widget>[
+                        new Expanded(
+                            flex: 2,
+                            child: new Container(
+                              padding:
+                                  EdgeInsets.fromLTRB(12.0, 10.0, 10.0, 10.0),
+                              child: new Text("Category"),
+                            )),
+                        new Expanded(
+                          flex: 4,
+                          child: new InputDecorator(
+                            decoration: const InputDecoration(
+                              //labelText: 'Activity',
+                              hintText: 'Choose an category',
+                              hintStyle: TextStyle(
+                                fontSize: 16.0,
+                                fontFamily: "OpenSans",
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                            isEmpty: _selected == null,
+                            child: new DropdownButton(
+                              value: _selected,
+                              isDense: true,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  _selected = newValue;
+                                  print(_selected);
+                                });
+                              },
+                              items: snapshot.data.documents
+                                  .map((DocumentSnapshot document) {
+                                return new DropdownMenuItem<String>(
+                                    value: document.data['title'],
+                                    child: new Container(
+                                      decoration: new BoxDecoration(
+                                          borderRadius:
+                                              new BorderRadius.circular(5.0)),
+                                      height: 100.0,
+                                      padding: EdgeInsets.fromLTRB(
+                                          10.0, 2.0, 10.0, 0.0),
+                                      //color: primaryColor,
+                                      child: new Text(document.data['title']),
+                                    ));
+                              }).toList(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+
+            // RaisedButton(
+            //     shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(5.0)),
+            //     elevation: 4.0,
+            //     onPressed: () {
+            //       DatePicker.showTimePicker(context, showTitleActions: true,
+            //           onChanged: (time) {
+            //         print('change $time');
+            //       }, onConfirm: (time) {
+            //         setState(() {
+            //           startTime = '${time.hour}:${time.minute}';
+            //         });
+            //         print('confirm ${time.hour}:${time.minute}');
+            //       }, currentTime: DateTime.now(), locale: LocaleType.en);
+            //     },
+            //     child: Text(this.startTime.toString())),
+
+            // MaterialButton(
+            //   onPressed: () {
+            //     getData();
+            //   },
+            //   child: Text(
+            //     'Test Button',
+            //   ),
+            //   color: Colors.black,
+            //   textColor: Colors.white,
+            // ),
+            // TextField(
+            //   controller: startTimeController,
+            //   decoration: InputDecoration(labelText: 'Select start time'),
+            //   onTap: () async {
+            //     final selectedTime = await _selectTime(context);
+            //     // print(selectedTime);
+
+            //     setState(() {
+            //       if (selectedTime != null) {
+            //         this.endTime = selectedTime.toString();
+            //         startTimeController.text = selectedTime.hour.toString() +
+            //             ':' +
+            //             selectedTime.minute.toString();
+            //       }
+            //     });
+            //   },
+            // ),
+            // TextField(
+            //   controller: endTimeController,
+            //   decoration: InputDecoration(labelText: 'Select end time'),
+            //   onTap: () async {
+            //     final selectedTime = await _selectTime(context);
+            //     // print(selectedTime);
+
+            //     setState(() {
+            //       if (selectedTime != null) {
+            //         this.endTime = selectedTime.toString();
+            //         endTimeController.text = selectedTime.hour.toString() +
+            //             ':' +
+            //             selectedTime.minute.toString();
+            //       }
+            //     });
+            //   },
+            // )
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), title: Text('Profile'))
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('baby').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return LinearProgressIndicator();
+
+        print(snapshot.data.documents);
+      },
+    );
+  }
+}
