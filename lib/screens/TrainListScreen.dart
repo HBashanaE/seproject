@@ -90,11 +90,22 @@ class Train1 extends StatelessWidget{
 
   Widget build(BuildContext context){
     return GestureDetector(
-      onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TrainDetails()),
-                );
+      onTap: () 
+      {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TrainView(
+
+          "", 
+                                      this.name,
+                                      this.startStation, 
+                                      this.startTime, 
+                                      this.endStation, 
+                                      this.departureTime, 
+                                      this.currentLocation
+        )),
+      );
+      },
       child: Container(
       padding: EdgeInsets.all(2),
       height: 100,
