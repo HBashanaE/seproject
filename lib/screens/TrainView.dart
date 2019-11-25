@@ -113,8 +113,6 @@ class _TrainViewState extends State<TrainView> {
                   Container(
                     margin: const EdgeInsets.all(30.0),
                     padding: const EdgeInsets.all(10.0),
-                    // color: Colors.redAccent,
-                    // width: MediaQuery.of(context).size.width,
                     height: 50.0,
                     child: Center(
                       child: 
