@@ -9,11 +9,18 @@ class TrainList extends StatelessWidget {
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(title: Text("Train List")),
-      body: ListView(
+      body:Container(
+      // height: 200,
+      // width: 350,
+      alignment: Alignment.topCenter,
+      child: ListView(
         // child: Stack(
           shrinkWrap: true, 
-          padding: const EdgeInsets.fromLTRB(2.0, 10.0, 2.0, 10.0), 
+          
+          padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0), 
+          
           children: <Widget>[
+            
             Train(
               name: 'train-1',
               startStation: 'Katubedda',
@@ -23,7 +30,7 @@ class TrainList extends StatelessWidget {
               currentLocation: 'papliyana'
             ),
             Train(
-              name: 'train-1',
+              name: 'train-2',
               startStation: 'Katubedd',
               endStation: 'koratuwa',
               startTime: '10.00am',
@@ -31,7 +38,7 @@ class TrainList extends StatelessWidget {
               currentLocation: 'papliyana'
             ),
             Train(
-              name: 'train-1',
+              name: 'train-2',
               startStation: 'Katubedd',
               endStation: 'koratuwa',
               startTime: '10.00am',
@@ -39,7 +46,7 @@ class TrainList extends StatelessWidget {
               currentLocation: 'papliyana'
             ),
             Train(
-              name: 'train-1',
+              name: 'train-3',
               startStation: 'Katubedd',
               endStation: 'koratuwa',
               startTime: '10.00am',
@@ -47,7 +54,7 @@ class TrainList extends StatelessWidget {
               currentLocation: 'papliyana'
             ),
             Train(
-              name: 'train-1',
+              name: 'train-4',
               startStation: 'Katubedd',
               endStation: 'koratuwa',
               startTime: '10.00am',
@@ -55,7 +62,7 @@ class TrainList extends StatelessWidget {
               currentLocation: 'papliyana'
             ),
             Train(
-              name: 'train-1',
+              name: 'train-5',
               startStation: 'Katubedd',
               endStation: 'koratuwa',
               startTime: '10.00am',
@@ -66,90 +73,12 @@ class TrainList extends StatelessWidget {
           ],
         // )
       )
+      )
     );
   }
 }
 
-class Train1 extends StatelessWidget{
-  Train1({
-    Key key, 
-    this.name,
-    this.startTime, 
-    this.departureTime, 
-    this.startStation,
-    this.endStation,
-    this.currentLocation
-  });
 
-  final String name;
-  final String startTime;
-  final String departureTime;
-  final String startStation;
-  final String endStation;
-  final String currentLocation;
-
-  Widget build(BuildContext context){
-    return GestureDetector(
-      onTap: () 
-      {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => TrainView(
-
-          "", 
-                                      this.name,
-                                      this.startStation, 
-                                      this.startTime, 
-                                      this.endStation, 
-                                      this.departureTime, 
-                                      this.currentLocation
-        )),
-      );
-      },
-      child: Container(
-      padding: EdgeInsets.all(2),
-      height: 100,
-      width: 150,
-      color: Colors.blue,
-      child: Card(   
-        color: Colors.green,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Expanded( 
-              child: Container( 
-                padding: EdgeInsets.all(5), 
-                child: Column(    
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly, 
-                    children: <Widget>[ 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-                        children: <Widget> [                          
-                          Text(this.startStation),
-                          Text(this.startTime),
-                        ],
-                      ),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-                        children: <Widget> [                          
-                          Text(this.endStation),
-                          Text(this.departureTime),
-                        ],
-                      ),
-                                      
-                    ], 
-                )
-              )
-          )
-                  ],
-                )
-              )
-          ),
-    );  
-  }
-  
-}
 
 class Train extends StatelessWidget {
   Train({
@@ -171,26 +100,30 @@ class Train extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        color: Colors.grey,
-        child: FlatButton(
+          color: Colors.white10,
+          child: FlatButton(
+            padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0), 
           
-          onPressed: ()=>{
-            navigate(context, TrainView(
-                                      "",
-                                      this.name,
-                                      this.startStation, 
-                                      this.startTime, 
-                                      this.endStation, 
-                                      this.departureTime, 
-                                      this.currentLocation 
-                                    ))
+          onPressed: ()=>{ 
+            navigate(context, 
+              TrainView(
+                this.name,
+                this.startStation, 
+                this.startTime, 
+                this.endStation, 
+                this.departureTime, 
+                this.currentLocation 
+              )
+            )
           },
           // child: Card(
           child: Column(
             
             children: <Widget>[
+              
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                
                 children: <Widget> [                          
                   Text(this.startStation),
                   Text(this.startTime),
@@ -200,8 +133,8 @@ class Train extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween, 
                 children: <Widget> [                          
-                  Text(this.startStation),
-                  Text(this.startTime),
+                  Text(this.endStation),
+                  Text(this.departureTime),
                 ],
               )
             ],
