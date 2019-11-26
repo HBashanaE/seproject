@@ -1,6 +1,7 @@
 // import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:seproject/widgets/stationCard.dart';
 
 // void main() => runApp(TrainView(this.title, 
                                       // this.name,
@@ -11,7 +12,6 @@ import 'package:flutter/material.dart';
                                       // this.currentLocation));
 
 class TrainView extends StatefulWidget {  
-   String title;
    String name;
    String startTime;
    String departureTime;
@@ -21,7 +21,6 @@ class TrainView extends StatefulWidget {
   //  String n="madhavi";
 
   TrainView(
-    String title,
     String name,
     String startTime, 
     String departureTime, 
@@ -30,7 +29,6 @@ class TrainView extends StatefulWidget {
     String currentLocation
   )
   {
-    this.title = title;
     this.name = name ;
     this.startTime = startTime;
     this.departureTime = departureTime;
@@ -41,7 +39,6 @@ class TrainView extends StatefulWidget {
 
   @override
   _TrainViewState createState() => _TrainViewState(
-                                      this.title, 
                                       this.name,
                                       this.startStation, 
                                       this.startTime, 
@@ -53,7 +50,6 @@ class TrainView extends StatefulWidget {
 
 class _TrainViewState extends State<TrainView> {    
 
-   String title;
    String name;
    String startTime;
    String departureTime;
@@ -63,7 +59,6 @@ class _TrainViewState extends State<TrainView> {
   //  String n="madhavi";
 
   _TrainViewState(
-    String title,
     String name,
     String startTime, 
     String departureTime, 
@@ -72,7 +67,6 @@ class _TrainViewState extends State<TrainView> {
     String currentLocation
   )
   {
-    this.title = title;
     this.name = name ;
     this.startTime = startTime;
     this.departureTime = departureTime;
@@ -83,7 +77,7 @@ class _TrainViewState extends State<TrainView> {
   @override
   Widget build(BuildContext context){    
     return Scaffold(
-      appBar: AppBar(title: Text("Train List")),
+      appBar: AppBar(title: Text('Current location ')),
       body:       
       Row(
         mainAxisAlignment: MainAxisAlignment.center, 
@@ -93,61 +87,27 @@ class _TrainViewState extends State<TrainView> {
         Expanded(          
           flex: 2, // 20%
           child: Container(),
-
         ),
         Expanded(
           flex: 6, // 60%
           child: Container(
-            height: 250,
+            // height: 250,
             
-            color: Colors.blueGrey,
             child: Column(  
               mainAxisAlignment: MainAxisAlignment.center, 
               children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                
-                children: <Widget>[
-                  
-                  Container(
-                    margin: const EdgeInsets.all(30.0),
-                    padding: const EdgeInsets.all(10.0),
-                    height: 50.0,
-                    child: Center(
-                      child: 
-                      Text(
-                        // widget.startStation,
-                        this.currentLocation,
-                        style: TextStyle(
-                          fontSize: 36.0,
-                          
-                          color: Colors.black54 ,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              StationCard(
+                name: currentLocation,
+                current: false,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    // color: Colors.blueAccent,
-                    // width: MediaQuery.of(context).size.width,
-                    height: 50.0,
-                    child: Center(
-                      child: Text(
-                        'current location',
-                        style: TextStyle(
-                          fontSize: 18.0, 
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              StationCard(
+                name: currentLocation,
+                current: true,
+              ),
+             
+              StationCard(
+                name: 'current location',
+                current: false,
               ),
             ]),
           ),
