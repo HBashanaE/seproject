@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:seproject/screens/TrainView.dart';
 
@@ -5,77 +6,43 @@ class TrainList extends StatelessWidget {
   TrainList ({Key key, this.title}) : super(key:key);
   final String title;
 
+  Widget _build(BuildContext context, DocumentSnapshot documentSnapshot){
+    return Card(
+      
+      child: Train(
+        
+              name: documentSnapshot['Start Station'],
+              startStation: documentSnapshot['Start Station'],
+              endStation: documentSnapshot['End Station'],
+              startTime: documentSnapshot['Start Time'],
+              departureTime: documentSnapshot['End Time'],
+              currentLocation: documentSnapshot['Start Station']
+            ),
+    );
+  }
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(title: Text("Train List")),
-      body:Container(
-      // height: 200,
-      // width: 350,
-      alignment: Alignment.topCenter,
-      child: ListView(
-        // child: Stack(
-          shrinkWrap: true, 
-          
-          padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0), 
-          
-          children: <Widget>[
+      body: StreamBuilder<QuerySnapshot>(
+        
+        stream: Firestore.instance.collection('TrainJourney').snapshots(),
+        builder: (context, snapshot){
+          if (!snapshot.hasData) return const Text('Loading...');
+          return ListView.builder(
+            padding: const EdgeInsets.fromLTRB(40.0, 10.0, 40.0, 10.0), 
+            itemExtent: 80.0,
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context, index) => 
+              _build(context, snapshot.data.documents[index]),
             
-            Train(
-              name: 'train-1',
-              startStation: 'Katubedda',
-              endStation: 'koratuwa',
-              startTime: '10.00am',
-              departureTime: '12.30pm',
-              currentLocation: 'papliyana'
-            ),
-            Train(
-              name: 'train-2',
-              startStation: 'Katubedd',
-              endStation: 'koratuwa',
-              startTime: '10.00am',
-              departureTime: '12.30pm',
-              currentLocation: 'papliyana'
-            ),
-            Train(
-              name: 'train-2',
-              startStation: 'Katubedd',
-              endStation: 'koratuwa',
-              startTime: '10.00am',
-              departureTime: '12.30pm',
-              currentLocation: 'papliyana'
-            ),
-            Train(
-              name: 'train-3',
-              startStation: 'Katubedd',
-              endStation: 'koratuwa',
-              startTime: '10.00am',
-              departureTime: '12.30pm',
-              currentLocation: 'papliyana'
-            ),
-            Train(
-              name: 'train-4',
-              startStation: 'Katubedd',
-              endStation: 'koratuwa',
-              startTime: '10.00am',
-              departureTime: '12.30pm',
-              currentLocation: 'papliyana'
-            ),
-            Train(
-              name: 'train-5',
-              startStation: 'Katubedd',
-              endStation: 'koratuwa',
-              startTime: '10.00am',
-              departureTime: '12.30pm',
-              currentLocation: 'papliyana'
-            ),
-            
-          ],
-        // )
-      )
-      )
+          );
+         },      
+      ),
     );
   }
+
 }
 
 
@@ -102,7 +69,7 @@ class Train extends StatelessWidget {
     return Card(
           color: Colors.white10,
           child: FlatButton(
-            padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0), 
+          padding: const EdgeInsets.fromLTRB(50.0, 15.0, 50.0, 10.0), 
           
           onPressed: ()=>{ 
             navigate(context, 
@@ -117,7 +84,7 @@ class Train extends StatelessWidget {
             )
           },
           // child: Card(
-          child: Column(
+          child: Column( 
             
             children: <Widget>[
               
