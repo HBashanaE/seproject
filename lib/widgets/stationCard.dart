@@ -14,8 +14,10 @@ class StationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+          
           color: backgroundColor(current),
           child: Row(
+            
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 
@@ -23,15 +25,13 @@ class StationCard extends StatelessWidget {
                   
                   Container(
                     margin: const EdgeInsets.all(10.0),
-                    padding: const EdgeInsets.all(15.0),
-                    height: 70.0,
+                    padding: const EdgeInsets.all(15.0), 
                     child: Center(
                       child: 
                       Text(
-                        // widget.startStation,
                         this.name,
                         style: TextStyle(
-                          fontSize: 20.0,
+                          fontSize: 15.0,
                           fontWeight: FontWeight.bold,
                           color: Colors.black54 ,
                         ),
